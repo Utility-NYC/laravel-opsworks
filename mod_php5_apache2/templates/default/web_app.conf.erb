@@ -51,7 +51,9 @@
   <% else -%>
   IncludeOptional <%= @params[:local_config] %>*
   <% end -%>
-  Redirect permanent / https://<%= @params[:server_name] %>
+  # if using Amazon ELB with SSL Termination
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule !/status https://%{SERVER_NAME}%{REQUEST_URI} [L,R]
 </VirtualHost>
 
 <% if node[:deploy][@application_name][:ssl_support] -%>
